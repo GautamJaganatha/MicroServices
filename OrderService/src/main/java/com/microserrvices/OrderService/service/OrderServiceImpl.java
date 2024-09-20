@@ -9,7 +9,9 @@ import com.microserrvices.OrderService.external.response.PaymentResponse;
 import com.microserrvices.OrderService.model.OrderRequest;
 import com.microserrvices.OrderService.model.OrderResponse;
 import com.microserrvices.OrderService.repository.OrderRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,22 +19,21 @@ import java.time.Instant;
 
 @Service
 @Log4j2
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService{
 
+    @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
     private ProductService productService;
 
+    @Autowired
     private PaymentService paymentService;
 
+    @Autowired
     private RestTemplate restTemplate;
 
-    public OrderServiceImpl(OrderRepository orderRepository, ProductService productService, PaymentService paymentService, RestTemplate restTemplate) {
-        this.orderRepository = orderRepository;
-        this.productService = productService;
-        this.paymentService = paymentService;
-        this.restTemplate = restTemplate;
-    }
 
     @Override
     public Long placeOrder(OrderRequest orderRequest) {
@@ -68,7 +69,7 @@ public class OrderServiceImpl implements OrderService{
                         .amount(orderRequest.getTotalAmount())
                         .build();
 
-        String orderStatus = null;
+        String orderStatus;
         try {
             paymentService.doPayment(paymentRequest);
             log.info("Payment done Successfully, Changing the Order status to PLACED");
@@ -107,13 +108,9 @@ public class OrderServiceImpl implements OrderService{
                         PaymentResponse.class
                         );
 
-        OrderResponse.ProductDetails productDetails1 =
-                OrderResponse.ProductDetails
-                        .builder()
-                        .productName(productDetails.getProductName())
-                        .productId(productDetails.getProductId())
-                        .build();
 
+
+        assert paymentResponse != null;
         OrderResponse.PaymentDetails paymentDetails =
                 OrderResponse.PaymentDetails.builder()
                         .paymentId(paymentResponse.getPaymentId())
