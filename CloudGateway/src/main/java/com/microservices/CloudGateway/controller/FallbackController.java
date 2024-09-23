@@ -1,5 +1,6 @@
 package com.microservices.CloudGateway.controller;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,4 +21,6 @@ public class FallbackController {
     public String productServiceFallback() {
         return "Product Service is down!";
     }
+
+
 }
